@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SolarMind AI — Smart Energy Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #08111e;
+      --bg2: #0d1a2b;
+      --bg3: #111f30;
+      --surface: #142234;
+      --surface2: #1a2d42;
+      --border: rgba(251, 191, 36, .12);
+      --border2: rgba(255, 255, 255, .06);
+      --solar: #fbbf24;
+      --solar-dim: #f59e0b;
+      --solar-glow: rgba(251, 191, 36, .18);
+      --green: #22c55e;
+      --green-dim: #16a34a;
+      --green-glow: rgba(34, 197, 94, .15);
+      --text: #e8f0f7;
+      --text2: #7a96b0;
+      --text3: #4a6680;
+      --radius: 14px;
+      --radius-lg: 20px;
+      --font-head: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --shadow-card: 0 8px 32px rgba(0, 0, 0, .45);
+      --shadow-solar: 0 0 28px rgba(251, 191, 36, .22);
+      --transition: .22s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    body {
+      display: flex;
+      overflow: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--surface2);
+      border-radius: 99px;
+    }
+
+    /* ─── SVG ICON HELPER ──────────────────────────────── */
+    .icon {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    .icon-sm {
+      width: 16px;
+      height: 16px;
+    }
+
+    .icon-lg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .icon-xl {
+      width: 40px;
+      height: 40px;
+    }
+
+    /* ─── SIDEBAR ────────────────────────────────────────── */
+    .sidebar {
+      width: 260px;
+      min-width: 260px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border2);
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      position: relative;
+      z-index: 10;
+      transition: transform var(--transition);
+    }
+
+    .sidebar-logo {
+      padding: 26px 22px 18px;
+      border-bottom: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 60%, #22c55e 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(251, 191, 36, .35);
+    }
+
+    .logo-icon svg {
+      stroke: #000;
+      width: 22px;
+      height: 22px;
+    }
+
+    .logo-text {
+      font-family: var(--font-head);
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -.02em;
+    }
+
+    .logo-text span {
+      color: var(--solar);
+    }
+
+    .sidebar-section {
+      padding: 18px 14px 6px;
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text3);
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 16px;
+      margin: 2px 8px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: .92rem;
+      font-weight: 500;
+      color: var(--text2);
+      transition: background var(--transition), color var(--transition);
+      position: relative;
+      user-select: none;
+    }
+
+    .nav-item:hover {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(251, 191, 36, .12), rgba(251, 191, 36, .04));
+      color: var(--solar);
+      border: 1px solid rgba(251, 191, 36, .18);
+    }
+
+    .nav-item.active .icon {
+      filter: drop-shadow(0 0 6px rgba(251, 191, 36, .6));
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--green);
+      color: #000;
+      font-size: .62rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 99px;
+      letter-spacing: .04em;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 14px;
+      border-top: 1px solid var(--border2);
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--surface);
+      border-radius: 10px;
+      font-size: .82rem;
+      color: var(--text2);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px rgba(34, 197, 94, .6);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: .6;
+        transform: scale(.85);
+      }
+    }
+
+    /* ─── MAIN ───────────────────────────────────────────── */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg);
+      position: relative;
+    }
+
+    .main::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(251, 191, 36, .03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(251, 191, 36, .03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    /* ─── TOPBAR ─────────────────────────────────────────── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border2);
+      background: rgba(8, 17, 30, .8);
+      backdrop-filter: blur(12px);
+      z-index: 5;
+      position: relative;
+    }
+
+    .topbar-title {
+      font-family: var(--font-head);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .topbar-sub {
+      font-size: .8rem;
+      color: var(--text2);
+      margin-left: 2px;
+    }
+
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text2);
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+
+    /* ─── CONTENT PANELS ────────────────────────────────── */
+    .panel {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .panel.active {
+      display: flex;
+    }
+
+    /* ─── CHAT STYLE (shared by all panels) ─────────────── */
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 28px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .chat-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      text-align: center;
+      gap: 16px;
+      padding: 40px;
+    }
+
+    .chat-empty .empty-icon {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, rgba(251, 191, 36, .15), rgba(34, 197, 94, .1));
+      border: 1px solid rgba(251, 191, 36, .25);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 30px rgba(251, 191, 36, .12);
+    }
+
+    .chat-empty h2 {
+      font-family: var(--font-head);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -.02em;
+    }
+
+    .chat-empty p {
+      font-size: .9rem;
+      color: var(--text2);
+      max-width: 380px;
+      line-height: 1.6;
+    }
+
+    .suggestion-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 6px;
+    }
+
+    .chip {
+      padding: 8px 16px;
+      border-radius: 99px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: .83rem;
+      color: var(--text2);
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition), border-color var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chip:hover {
+      background: rgba(251, 191, 36, .1);
+      color: var(--solar);
+      border-color: rgba(251, 191, 36, .3);
+    }
+
+    /* message bubbles */
+    .msg {
+      display: flex;
+      gap: 12px;
+      animation: msgIn .28s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    @keyframes msgIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes imgReveal {
+      from {
+        opacity: 0;
+        filter: blur(12px);
+        transform: scale(1.02);
+      }
+
+      to {
+        opacity: 1;
+        filter: blur(0);
+        transform: scale(1);
+      }
+    }
+
+    .msg.user {
+      flex-direction: row-reverse;
+    }
+
+    .msg-avatar {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .msg.user .msg-avatar {
+      background: linear-gradient(135deg, var(--solar-dim), var(--solar));
+      color: #000;
+    }
+
+    .msg.bot .msg-avatar {
+      background: linear-gradient(135deg, var(--green-dim), var(--green));
+      color: #000;
+      box-shadow: 0 0 14px rgba(34, 197, 94, .3);
+    }
+
+    .msg-bubble {
+      max-width: 72%;
+      padding: 13px 18px;
+      border-radius: 16px;
+      font-size: .9rem;
+      line-height: 1.65;
+    }
+
+    .msg.user .msg-bubble {
+      background: linear-gradient(135deg, rgba(251, 191, 36, .18), rgba(251, 191, 36, .08));
+      border: 1px solid rgba(251, 191, 36, .22);
+      border-top-right-radius: 4px;
+      color: var(--text);
+    }
+
+    .msg.bot .msg-bubble {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-top-left-radius: 4px;
+      color: var(--text);
+    }
+
+    .msg.bot .msg-bubble.wide {
+      max-width: 90%;
+    }
+
+    /* inline chart inside bubble */
+    .bubble-chart-wrap {
+      width: 100%;
+      height: 280px;
+      margin-top: 10px;
+      position: relative;
+    }
+
+    /* inline image inside bubble */
+    .bubble-img {
+      width: 100%;
+      max-width: 480px;
+      border-radius: 10px;
+      border: 1px solid var(--border2);
+      display: block;
+      margin-top: 8px;
+    }
+
+    /* blurry placeholder while generating */
+    .img-placeholder {
+      width: 100%;
+      max-width: 480px;
+      height: 320px;
+      border-radius: 10px;
+      margin-top: 8px;
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 50%, var(--bg3) 100%);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .img-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(251, 191, 36, .08) 50%, transparent 100%);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%);
+      }
+
+      100% {
+        transform: translateX(100%);
+      }
+    }
+
+    .img-placeholder-inner {
+      text-align: center;
+      z-index: 1;
+    }
+
+    .img-placeholder-inner svg {
+      width: 48px;
+      height: 48px;
+      stroke: var(--text3);
+      opacity: .5;
+      animation: placeholderPulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes placeholderPulse {
+
+      0%,
+      100% {
+        opacity: .3;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: .6;
+        transform: scale(1.05);
+      }
+    }
+
+    .img-status-text {
+      margin-top: 12px;
+      font-size: .82rem;
+      color: var(--text3);
+      transition: opacity .4s;
+    }
+
+    .img-placeholder .progress-ring {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      width: 28px;
+      height: 28px;
+    }
+
+    .img-placeholder .progress-ring circle {
+      fill: none;
+      stroke: var(--solar);
+      stroke-width: 2;
+      stroke-dasharray: 80;
+      stroke-dashoffset: 80;
+      animation: ringFill 3s linear infinite;
+      stroke-linecap: round;
+    }
+
+    @keyframes ringFill {
+      0% {
+        stroke-dashoffset: 80;
+      }
+
+      50% {
+        stroke-dashoffset: 20;
+      }
+
+      100% {
+        stroke-dashoffset: 80;
+      }
+    }
+
+    /* typing indicator */
+    .typing-dots {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      padding: 4px 0;
+    }
+
+    .typing-dots span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: typingDot 1.2s infinite;
+    }
+
+    .typing-dots span:nth-child(2) {
+      animation-delay: .2s;
+    }
+
+    .typing-dots span:nth-child(3) {
+      animation-delay: .4s;
+    }
+
+    @keyframes typingDot {
+
+      0%,
+      60%,
+      100% {
+        transform: translateY(0);
+        opacity: .4;
+      }
+
+      30% {
+        transform: translateY(-5px);
+        opacity: 1;
+      }
+    }
+
+    /* ─── CHAT INPUT (shared) ──────────────────────────── */
+    .chat-input-wrap {
+      padding: 16px 28px 22px;
+      background: rgba(8, 17, 30, .9);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--border2);
+    }
+
+    .chat-input-box {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius-lg);
+      padding: 10px 10px 10px 18px;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .chat-input-box:focus-within {
+      border-color: rgba(251, 191, 36, .4);
+      box-shadow: 0 0 0 3px rgba(251, 191, 36, .08), var(--shadow-solar);
+    }
+
+    .chat-input-box textarea {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      resize: none;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: .93rem;
+      line-height: 1.5;
+      max-height: 130px;
+      min-height: 24px;
+    }
+
+    .chat-input-box textarea::placeholder {
+      color: var(--text3);
+    }
+
+    .send-btn {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, var(--solar-dim), var(--solar));
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform var(--transition), box-shadow var(--transition);
+      box-shadow: 0 0 16px rgba(251, 191, 36, .3);
+    }
+
+    .send-btn:hover {
+      transform: scale(1.06);
+      box-shadow: 0 0 24px rgba(251, 191, 36, .5);
+    }
+
+    .send-btn:active {
+      transform: scale(.96);
+    }
+
+    .send-btn:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .input-hint {
+      font-size: .75rem;
+      color: var(--text3);
+      margin-top: 8px;
+      padding-left: 4px;
+    }
+
+    .input-hint kbd {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-size: .72rem;
+      font-family: monospace;
+    }
+
+    /* ─── TOAST ────────────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: #1e0f0f;
+      border: 1px solid rgba(239, 68, 68, .3);
+      border-radius: 12px;
+      padding: 14px 18px;
+      color: #fca5a5;
+      font-size: .88rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .5);
+      z-index: 100;
+      transform: translateY(120px);
+      opacity: 0;
+      transition: transform .3s cubic-bezier(.4, 0, .2, 1), opacity .3s;
+      max-width: 340px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    /* ─── IMAGE PARAM BAR ────────────────────── */
+    .param-bar {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      padding: 10px 24px;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border2);
+      z-index: 2;
+      position: relative;
+    }
+
+    .param-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .param-group label {
+      font-size: .78rem;
+      color: var(--text2);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .param-group input[type=range] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100px;
+      height: 4px;
+      background: var(--surface2);
+      border-radius: 99px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .param-group input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--solar);
+      box-shadow: 0 0 8px rgba(251, 191, 36, .4);
+      cursor: pointer;
+    }
+
+    .param-group input[type=range]::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: none;
+      background: var(--solar);
+      box-shadow: 0 0 8px rgba(251, 191, 36, .4);
+      cursor: pointer;
+    }
+
+    .param-value {
+      font-size: .75rem;
+      color: var(--solar);
+      font-weight: 700;
+      min-width: 22px;
+      text-align: center;
+      background: rgba(251, 191, 36, .1);
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1px solid rgba(251, 191, 36, .15);
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success {
+      background: #0d1f12;
+      border-color: rgba(34, 197, 94, .3);
+      color: #86efac;
+    }
+
+    .toast-close {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0 0 0 8px;
+    }
+
+    /* ─── MOBILE OVERLAY ─────────────────────────────── */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .6);
+      z-index: 9;
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────── */
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 20;
+        transform: translateX(-100%);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .sidebar-overlay.open {
+        display: block;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .topbar {
+        padding: 14px 18px;
+      }
+
+      .chat-messages {
+        padding: 18px 16px;
+      }
+
+      .chat-input-wrap {
+        padding: 12px 16px 18px;
+      }
+
+      .msg-bubble {
+        max-width: 88%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <!-- ─── SIDEBAR ──────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5" />
+          <line x1="12" y1="1" x2="12" y2="3" />
+          <line x1="12" y1="21" x2="12" y2="23" />
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+          <line x1="1" y1="12" x2="3" y2="12" />
+          <line x1="21" y1="12" x2="23" y2="12" />
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        </svg>
+      </div>
+      <div>
+        <div class="logo-text">Solar<span>Mind</span></div>
+        <div style="font-size:.68rem;color:var(--text3);letter-spacing:.04em;margin-top:1px;">AI ENERGY PLATFORM</div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">Modules</div>
+
+    <div class="nav-item active" id="nav-chat" onclick="switchPanel('chat')">
+      <svg class="icon" viewBox="0 0 24 24">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+      RAG Chat
+    </div>
+    <div class="nav-item" id="nav-image" onclick="switchPanel('image')">
+      <svg class="icon" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+        <circle cx="8.5" cy="8.5" r="1.5" />
+        <polyline points="21 15 16 10 5 21" />
+      </svg>
+      Image Generator
+    </div>
+    <div class="nav-item" id="nav-signal" onclick="switchPanel('signal')">
+      <svg class="icon" viewBox="0 0 24 24">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+      </svg>
+      Signal Prediction
+    </div>
+    <div class="nav-item" id="nav-auto" onclick="switchPanel('auto')">
+      <svg class="icon" viewBox="0 0 24 24">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10" />
+      </svg>
+      Auto Mode
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        <span>All systems online</span>
+        <span style="margin-left:auto;font-size:.75rem;color:var(--green)">v3.0</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ─── MAIN ─────────────────────────────────────── -->
+  <main class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <button class="hamburger" onclick="openSidebar()">
+        <svg class="icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+      <div>
+        <div class="topbar-title" id="topbarTitle">
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+          RAG Chat
+        </div>
+        <div class="topbar-sub" id="topbarSub">Powered by Smart Energy RAG</div>
+      </div>
+    </div>
+
+    <!-- ─── RAG CHAT PANEL ─────────────────────── -->
+    <div class="panel active" id="panel-chat">
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-empty" id="chatEmpty">
+          <div class="empty-icon">
+            <svg class="icon-xl" viewBox="0 0 24 24" fill="none" stroke="var(--solar)" stroke-width="1.5">
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+          </div>
+          <h2>Demandez à SolarMind AI</h2>
+          <p>Votre assistant intelligent pour l'énergie solaire, les technologies vertes et les systèmes durables.</p>
+          <div class="suggestion-chips">
+            <div class="chip" onclick="sendToPanel('chat','Comment fonctionne un panneau solaire photovoltaïque ?')">
+              Fonctionnement panneau</div>
+            <div class="chip" onclick="sendToPanel('chat','Que signifie le comptage net en énergie solaire ?')">Le
+              comptage net</div>
+            <div class="chip" onclick="sendToPanel('chat','Quels sont les meilleurs onduleurs solaires domestiques ?')">
+              Onduleurs domestiques</div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-input-wrap">
+        <div class="chat-input-box">
+          <textarea id="chatInput" rows="1" placeholder="Posez une question sur l'énergie solaire..."
+            onkeydown="handleKey(event,'chat')" oninput="autoResize(this)"></textarea>
+          <button class="send-btn" id="chatSendBtn" onclick="sendToPanel('chat')">
+            <svg class="icon" viewBox="0 0 24 24">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9" />
+            </svg>
+          </button>
+        </div>
+        <div class="input-hint">Appuyez sur <kbd>Enter</kbd> pour envoyer · <kbd>Shift+Enter</kbd> pour revenir à la
+          ligne</div>
+      </div>
+    </div>
+
+    <!-- ─── IMAGE PANEL (conversational) ────────── -->
+    <div class="panel" id="panel-image">
+      <div class="param-bar">
+        <div class="param-group">
+          <label for="paramSteps">
+            <svg class="icon icon-sm" viewBox="0 0 24 24" style="vertical-align:middle">
+              <path d="M12 20V10" />
+              <path d="M18 20V4" />
+              <path d="M6 20v-4" />
+            </svg>
+            Steps
+          </label>
+          <input type="range" id="paramSteps" min="10" max="50" value="25"
+            oninput="document.getElementById('paramStepsVal').textContent=this.value">
+          <span class="param-value" id="paramStepsVal">25</span>
+        </div>
+        <div class="param-group">
+          <label for="paramGuidance">
+            <svg class="icon icon-sm" viewBox="0 0 24 24" style="vertical-align:middle">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4" />
+              <path d="M12 8h.01" />
+            </svg>
+            Guidance
+          </label>
+          <input type="range" id="paramGuidance" min="1" max="20" value="8" step="0.5"
+            oninput="document.getElementById('paramGuidanceVal').textContent=this.value">
+          <span class="param-value" id="paramGuidanceVal">8</span>
+        </div>
+      </div>
+      <div class="chat-messages" id="imageMessages">
+        <div class="chat-empty" id="imageEmpty">
+          <div class="empty-icon">
+            <svg class="icon-xl" viewBox="0 0 24 24" fill="none" stroke="var(--solar)" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+          </div>
+          <h2>Image Generator</h2>
+          <p>Describe any solar or green tech visual and the AI will generate it for you.</p>
+          <div class="suggestion-chips">
+            <div class="chip" onclick="sendToPanel('image','Futuristic solar panel array in desert at golden hour')">
+              Solar Farm</div>
+            <div class="chip"
+              onclick="sendToPanel('image','Smart home with rooftop solar panels, modern architecture')">Smart Home
+            </div>
+            <div class="chip"
+              onclick="sendToPanel('image','Electric vehicle charging station powered by solar panels')">EV + Solar
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-input-wrap">
+        <div class="chat-input-box">
+          <textarea id="imageInput" rows="1" placeholder="Describe the image you want to generate..."
+            onkeydown="handleKey(event,'image')" oninput="autoResize(this)"></textarea>
+          <button class="send-btn" id="imageSendBtn" onclick="sendToPanel('image')">
+            <svg class="icon" viewBox="0 0 24 24">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9" />
+            </svg>
+          </button>
+        </div>
+        <div class="input-hint">Type a prompt to generate a solar-themed image</div>
+      </div>
+    </div>
+
+    <!-- ─── SIGNAL PANEL (conversational) ─────────── -->
+    <div class="panel" id="panel-signal">
+      <div class="chat-messages" id="signalMessages">
+        <div class="chat-empty" id="signalEmpty">
+          <div class="empty-icon">
+            <svg class="icon-xl" viewBox="0 0 24 24" fill="none" stroke="var(--solar)" stroke-width="1.5">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+            </svg>
+          </div>
+          <h2>Signal Prediction</h2>
+          <p>Predict the next 24 hours of solar energy generation. Negative values are automatically filtered to zero.
+          </p>
+          <div class="suggestion-chips">
+            <div class="chip" onclick="sendToPanel('signal','Predict the next 24 hours')">Predict next 24h</div>
+            <div class="chip" onclick="sendToPanel('signal','Solar energy forecast for today')">Today's forecast</div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-input-wrap">
+        <div class="chat-input-box">
+          <textarea id="signalInput" rows="1" placeholder="Ask for a signal prediction..."
+            onkeydown="handleKey(event,'signal')" oninput="autoResize(this)"></textarea>
+          <button class="send-btn" id="signalSendBtn" onclick="sendToPanel('signal')">
+            <svg class="icon" viewBox="0 0 24 24">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9" />
+            </svg>
+          </button>
+        </div>
+        <div class="input-hint">Type anything to run a prediction</div>
+      </div>
+    </div>
+
+    <!-- ─── AUTO PANEL (conversational, routes all 3) ── -->
+    <div class="panel" id="panel-auto">
+      <div class="chat-messages" id="autoMessages">
+        <div class="chat-empty" id="autoEmpty">
+          <div class="empty-icon">
+            <svg class="icon-xl" viewBox="0 0 24 24" fill="none" stroke="var(--solar)" stroke-width="1.5">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10" />
+            </svg>
+          </div>
+          <h2>Auto Mode</h2>
+          <p>Smart auto-router: mention <strong style="color:var(--solar)">image, draw, diagram</strong> for visuals,
+            <strong style="color:var(--green)">predict, forecast, signal</strong> for predictions, or just ask a
+            question.
+          </p>
+          <div class="suggestion-chips">
+            <div class="chip" onclick="sendToPanel('auto','Draw a solar panel installation diagram')">Draw solar diagram
+            </div>
+            <div class="chip" onclick="sendToPanel('auto','Predict solar production for tomorrow')">Predict production
+            </div>
+            <div class="chip" onclick="sendToPanel('auto','Explain how MPPT controllers work')">Explain MPPT</div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-input-wrap">
+        <div class="chat-input-box">
+          <textarea id="autoInput" rows="1" placeholder="Ask anything — auto-routed to the right module..."
+            onkeydown="handleKey(event,'auto')" oninput="autoResize(this)"></textarea>
+          <button class="send-btn" id="autoSendBtn" onclick="sendToPanel('auto')">
+            <svg class="icon" viewBox="0 0 24 24">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9" />
+            </svg>
+          </button>
+        </div>
+        <div class="input-hint">Auto-routing: <kbd>image/draw</kbd> → Image · <kbd>predict/forecast</kbd> → Signal ·
+          else → RAG</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <span id="toastMsg">Error</span>
+    <button class="toast-close" onclick="hideToast()">&#10005;</button>
+  </div>
+
+  <script>
+    /* ════════════════════════════════════════
+       CONFIG
+       ════════════════════════════════════════ */
+    const BASE_URL = 'http://localhost:8000';
+
+    /* ─── STATE ─────────────────────────── */
+    let currentPanel = 'chat';
+    const panelLoading = { chat: false, image: false, signal: false, auto: false };
+    let chartCounter = 0;
+
+    /* SVG templates for avatars */
+    const SVG_USER = `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+    const SVG_BOT = `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>`;
+
+    /* ─── PANEL SWITCHING ────────────────── */
+    const panelMeta = {
+      chat: { title: 'RAG Chat', sub: 'Powered by Smart Energy RAG', icon: '<svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' },
+      image: { title: 'Image Generator', sub: 'Solar & Green Tech Visualization', icon: '<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>' },
+      signal: { title: 'Signal Prediction', sub: 'Solar Energy Generation Forecasting', icon: '<svg class="icon" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>' },
+      auto: { title: 'Auto Mode', sub: 'Intelligent multi-module routing', icon: '<svg class="icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10"/></svg>' }
+    };
+
+    function switchPanel(name) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById(`panel-${name}`).classList.add('active');
+      document.getElementById(`nav-${name}`).classList.add('active');
+      currentPanel = name;
+      const m = panelMeta[name];
+      document.getElementById('topbarTitle').innerHTML = m.icon + ' ' + m.title;
+      document.getElementById('topbarSub').textContent = m.sub;
+      closeSidebar();
+    }
+
+    /* ─── SIDEBAR (mobile) ───────────────── */
+    function openSidebar() {
+      document.getElementById('sidebar').classList.add('open');
+      document.getElementById('sidebarOverlay').classList.add('open');
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').classList.remove('open');
+    }
+
+    /* ─── TOAST ──────────────────────────── */
+    let toastTimer;
+    function showToast(msg, type = 'error') {
+      const t = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      t.className = `toast ${type === 'success' ? 'success' : ''}`;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(hideToast, 4500);
+    }
+    function hideToast() { document.getElementById('toast').classList.remove('show'); }
+
+    /* ─── TEXTAREA AUTO-RESIZE ───────────── */
+    function autoResize(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 130) + 'px';
+    }
+
+    /* ─── SHARED CHAT HELPERS ────────────── */
+    function getContainerId(panel) {
+      const map = { chat: 'chatMessages', image: 'imageMessages', signal: 'signalMessages', auto: 'autoMessages' };
+      return map[panel];
+    }
+    function getInputId(panel) {
+      const map = { chat: 'chatInput', image: 'imageInput', signal: 'signalInput', auto: 'autoInput' };
+      return map[panel];
+    }
+    function getSendBtnId(panel) {
+      return panel + 'SendBtn';
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+    }
+
+    function appendMsg(panel, role, content, isHTML = false, extraClass = '') {
+      const container = document.getElementById(getContainerId(panel));
+      const empty = container.querySelector('.chat-empty');
+      if (empty) empty.style.display = 'none';
+
+      const div = document.createElement('div');
+      div.className = `msg ${role}`;
+      const avatar = role === 'user' ? SVG_USER : SVG_BOT;
+      const bubbleClass = extraClass ? `msg-bubble ${extraClass}` : 'msg-bubble';
+      div.innerHTML = `
+    <div class="msg-avatar">${avatar}</div>
+    <div class="${bubbleClass}">${isHTML ? content : escapeHtml(content)}</div>
+  `;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+      return div;
+    }
+
+    function showTyping(panel) {
+      const container = document.getElementById(getContainerId(panel));
+      const empty = container.querySelector('.chat-empty');
+      if (empty) empty.style.display = 'none';
+
+      const div = document.createElement('div');
+      div.className = 'msg bot';
+      div.id = 'typing_' + panel;
+      div.innerHTML = `
+    <div class="msg-avatar">${SVG_BOT}</div>
+    <div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>
+  `;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function removeTyping(panel) {
+      const el = document.getElementById('typing_' + panel);
+      if (el) el.remove();
+    }
+
+    function handleKey(e, panel) {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendToPanel(panel); }
+    }
+
+    /* ─── UNIFIED SEND ───────────────────── */
+    function sendToPanel(panel, prefill) {
+      const input = document.getElementById(getInputId(panel));
+      const msg = prefill || input.value.trim();
+      if (!msg) return;
+      if (panelLoading[panel]) return;
+
+      input.value = '';
+      input.style.height = 'auto';
+
+      switch (panel) {
+        case 'chat': doChat(msg); break;
+        case 'image': doImage(msg); break;
+        case 'signal': doSignal(msg); break;
+        case 'auto': doAuto(msg); break;
+      }
+    }
+
+    /* ─── RAG CHAT ───────────────────────── */
+    async function doChat(msg) {
+      panelLoading.chat = true;
+      document.getElementById('chatSendBtn').disabled = true;
+      appendMsg('chat', 'user', msg);
+      showTyping('chat');
+
+      try {
+        const res = await fetch(`${BASE_URL}/api/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: msg })
+        });
+        const data = await res.json();
+        removeTyping('chat');
+        if (!res.ok) throw new Error(data.detail || 'API error');
+        appendMsg('chat', 'bot', data.response || data.message || JSON.stringify(data));
+      } catch (err) {
+        removeTyping('chat');
+        appendMsg('chat', 'bot', 'Error: ' + (err.message || 'Could not reach the server.'));
+        showToast(err.message || 'Connection failed');
+      } finally {
+        panelLoading.chat = false;
+        document.getElementById('chatSendBtn').disabled = false;
+      }
+    }
+
+    /* ─── IMAGE (conversational + blurry placeholder) ── */
+    const IMG_STATUS_MESSAGES = [
+      'Initializing generation model...',
+      'Analyzing your prompt...',
+      'Building composition...',
+      'Rendering solar elements...',
+      'Adding lighting and shadows...',
+      'Refining details...',
+      'Enhancing colors and textures...',
+      'Applying final touches...',
+      'Almost there, finalizing output...'
+    ];
+
+    async function doImage(msg) {
+      panelLoading.image = true;
+      document.getElementById('imageSendBtn').disabled = true;
+      appendMsg('image', 'user', msg);
+
+      // Show blurry placeholder instead of typing dots
+      const placeholderId = 'imgPlaceholder_' + Date.now();
+      const placeholderHTML = `
+        <div class="img-placeholder" id="${placeholderId}">
+          <div class="img-placeholder-inner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <div class="img-status-text" id="${placeholderId}_status">${IMG_STATUS_MESSAGES[0]}</div>
+          </div>
+          <svg class="progress-ring" viewBox="0 0 28 28"><circle cx="14" cy="14" r="12"/></svg>
+        </div>`;
+      appendMsg('image', 'bot', placeholderHTML, true, 'wide');
+
+      // Rotate status messages
+      let msgIndex = 0;
+      const statusInterval = setInterval(() => {
+        msgIndex = (msgIndex + 1) % IMG_STATUS_MESSAGES.length;
+        const statusEl = document.getElementById(`${placeholderId}_status`);
+        if (statusEl) {
+          statusEl.style.opacity = '0';
+          setTimeout(() => {
+            statusEl.textContent = IMG_STATUS_MESSAGES[msgIndex];
+            statusEl.style.opacity = '1';
+          }, 300);
+        }
+      }, 3500);
+
+      try {
+        const res = await fetch(`${BASE_URL}/api/image`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: msg,
+            guidance_scale: parseFloat(document.getElementById('paramGuidance').value),
+            num_inference_steps: parseInt(document.getElementById('paramSteps').value)
+          })
+        });
+        const data = await res.json();
+        clearInterval(statusInterval);
+        if (!res.ok) throw new Error(data.detail || 'Image generation failed');
+
+        // Replace placeholder with actual image
+        const placeholderEl = document.getElementById(placeholderId);
+        if (placeholderEl) {
+          const wrapper = placeholderEl.closest('.msg-bubble');
+          if (wrapper) {
+            wrapper.innerHTML = `
+              <img class="bubble-img" src="${data.image}" alt="Generated image" style="animation: imgReveal .6s ease-out;" />
+              <div style="margin-top:6px;font-size:.78rem;color:var(--text3);">Generated for: "${escapeHtml(msg.slice(0, 60))}"</div>`;
+          }
+        }
+      } catch (err) {
+        clearInterval(statusInterval);
+        const placeholderEl = document.getElementById(placeholderId);
+        if (placeholderEl) {
+          const wrapper = placeholderEl.closest('.msg-bubble');
+          if (wrapper) wrapper.innerHTML = 'Error: ' + escapeHtml(err.message);
+        }
+        showToast(err.message || 'Image generation failed');
+      } finally {
+        panelLoading.image = false;
+        document.getElementById('imageSendBtn').disabled = false;
+      }
+    }
+
+    /* ─── SIGNAL (conversational + chart) ── */
+    async function doSignal(msg) {
+      panelLoading.signal = true;
+      document.getElementById('signalSendBtn').disabled = true;
+      appendMsg('signal', 'user', msg);
+      showTyping('signal');
+
+      // Generate 24h mock history
+      const history = generateHistory();
+
+      try {
+        const res = await fetch(`${BASE_URL}/api/signal/predict`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ history })
+        });
+        const data = await res.json();
+        removeTyping('signal');
+        if (!res.ok) throw new Error((typeof data.detail === 'string' ? data.detail : data.error) || 'Prediction failed');
+
+        const predictions = data.predictions;
+        if (!predictions || predictions.length === 0) throw new Error('No predictions returned');
+
+        const chartId = 'signalChart_' + (++chartCounter);
+        appendMsg('signal', 'bot',
+          `<div style="font-size:.88rem;margin-bottom:8px;">Prediction for the next 24h (${data.unit || 'kilowatts'})</div>
+       <div class="bubble-chart-wrap"><canvas id="${chartId}"></canvas></div>`, true, 'wide');
+
+        renderPredictionChart(chartId, predictions);
+
+      } catch (err) {
+        removeTyping('signal');
+        appendMsg('signal', 'bot', 'Error: ' + escapeHtml(err.message));
+        showToast(err.message);
+      } finally {
+        panelLoading.signal = false;
+        document.getElementById('signalSendBtn').disabled = false;
+      }
+    }
+
+    /* ─── AUTO MODE (routes to all 3) ────── */
+    async function doAuto(msg) {
+      panelLoading.auto = true;
+      document.getElementById('autoSendBtn').disabled = true;
+      appendMsg('auto', 'user', msg);
+
+      // Show placeholder (we don’t know if it'll be image or text yet, so use typing dots)
+      showTyping('auto');
+
+      try {
+        const res = await fetch(`${BASE_URL}/api/assistant`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: msg })
+        });
+        const data = await res.json();
+        removeTyping('auto');
+        if (!res.ok) throw new Error(data.detail || 'Failed');
+
+        if (data.type === 'image' && data.image) {
+          appendMsg('auto', 'bot',
+            `<div style="font-size:.82rem;color:var(--solar);font-weight:600;margin-bottom:4px;">Routed → Image Generator</div>
+             <img class="bubble-img" src="${data.image}" alt="Generated" style="animation: imgReveal .6s ease-out;" />`, true, 'wide');
+
+        } else if (data.type === 'signal' && data.predictions) {
+          const chartId = 'autoChart_' + (++chartCounter);
+          appendMsg('auto', 'bot',
+            `<div style="font-size:.82rem;color:var(--green);font-weight:600;margin-bottom:4px;">Routed → Signal Prediction</div>
+             <div style="font-size:.88rem;margin-bottom:8px;">${escapeHtml(data.response || '')}</div>
+             <div class="bubble-chart-wrap"><canvas id="${chartId}"></canvas></div>`, true, 'wide');
+          renderPredictionChart(chartId, data.predictions);
+
+        } else {
+          const txt = data.response || data.message || JSON.stringify(data);
+          appendMsg('auto', 'bot', txt);
+        }
+
+      } catch (err) {
+        removeTyping('auto');
+        appendMsg('auto', 'bot', 'Error: ' + escapeHtml(err.message));
+        showToast(err.message);
+      } finally {
+        panelLoading.auto = false;
+        document.getElementById('autoSendBtn').disabled = false;
+      }
+    }
+
+    /* ─── SIGNAL HELPERS ─────────────────── */
+    function generateHistory() {
+      const history = [];
+      const now = new Date();
+      for (let i = 24; i > 0; i--) {
+        const d = new Date(now.getTime() - i * 3600 * 1000);
+        const hour = d.getHours();
+        const isDay = hour > 6 && hour < 18;
+        history.push({
+          datetime: d.toISOString().split('.')[0],
+          ALLSKY_SFC_SW_DWN: isDay ? (Math.random() * 800 + 200) : 0,
+          T2M: 20 + Math.random() * 15
+        });
+      }
+      return history;
+    }
+
+    function renderPredictionChart(canvasId, predictions) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      const labels = [];
+      const values = [];
+      predictions.forEach(p => {
+        const d = new Date(p.datetime);
+        labels.push(d.getHours() + ':00');
+        values.push(Math.max(0, p.value));
+      });
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Predicted Signal (kW)',
+            data: values,
+            borderColor: '#fbbf24',
+            backgroundColor: 'rgba(251, 191, 36, 0.1)',
+            borderWidth: 2.5,
+            pointBackgroundColor: '#22c55e',
+            pointBorderColor: '#142234',
+            pointBorderWidth: 2,
+            pointRadius: 3,
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#7a96b0', font: { family: "'DM Sans', sans-serif", size: 11 } } },
+            tooltip: {
+              backgroundColor: 'rgba(20, 34, 52, 0.95)',
+              titleFont: { family: "'Syne', sans-serif" },
+              bodyFont: { family: "'DM Sans', sans-serif" },
+              padding: 10, displayColors: false
+            }
+          },
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#4a6680', font: { size: 10 } } },
+            y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#4a6680', font: { size: 10 } }, min: 0 }
+          }
+        }
+      });
+    }
+
+    /* ─── INIT ───────────────────────────── */
+    ['chatInput', 'imageInput', 'signalInput', 'autoInput'].forEach(id => {
+      document.getElementById(id).addEventListener('input', function () { autoResize(this); });
+    });
+  </script>
+</body>
+
+</html>

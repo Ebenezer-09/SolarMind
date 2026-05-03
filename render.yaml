@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: solarmind-ai
+    env: python
+    region: frankfurt  # Europe region, close to Africa/France for better latency
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
+    autoDeploy: true
