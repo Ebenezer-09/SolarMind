@@ -66,8 +66,12 @@ class ImageClient:
         Returns base64 encoded image or data URI
         """
         try:
-            # Try with minimal params first
-            params = {"prompt": prompt}
+            # Include all parameters in the request
+            params = {
+                "prompt": prompt,
+                "guidance_scale": guidance_scale,
+                "num_inference_steps": num_inference_steps
+            }
             
             response = requests.get(
                 f"{ImageClient.BASE_URL}/generate",

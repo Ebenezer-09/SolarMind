@@ -9,7 +9,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"
     rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/static/chart.min.js"></script>
   <style>
     /* ─── RESET & BASE ─────────────────────────────────── */
     *,
@@ -810,6 +810,14 @@
       border: 1px solid rgba(251, 191, 36, .15);
     }
 
+    .param-hint {
+      font-size: .72rem;
+      color: var(--text3);
+      padding-left: 24px;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
     .toast.show {
       transform: translateY(0);
       opacity: 1;
@@ -990,12 +998,12 @@
           <h2>Demandez à SolarMind AI</h2>
           <p>Votre assistant intelligent pour l'énergie solaire, les technologies vertes et les systèmes durables.</p>
           <div class="suggestion-chips">
-            <div class="chip" onclick="sendToPanel('chat','Comment fonctionne un panneau solaire photovoltaïque ?')">
-              Fonctionnement panneau</div>
-            <div class="chip" onclick="sendToPanel('chat','Que signifie le comptage net en énergie solaire ?')">Le
-              comptage net</div>
-            <div class="chip" onclick="sendToPanel('chat','Quels sont les meilleurs onduleurs solaires domestiques ?')">
-              Onduleurs domestiques</div>
+            <div class="chip" onclick="sendToPanel('chat','Quels sont les points essentiels à retenir sur la situation actuelle du secteur de l\'énergie ?')">
+              Situation actuelle</div>
+            <div class="chip" onclick="sendToPanel('chat','Quelles recommandations générales peut-on proposer pour améliorer l\'efficacité énergétique ?')">
+              Efficacité énergétique</div>
+            <div class="chip" onclick="sendToPanel('chat','Quels facteurs doivent être pris en compte pour évaluer une politique énergétique durable ?')">
+              Politique durable</div>
           </div>
         </div>
       </div>
@@ -1045,6 +1053,7 @@
           <span class="param-value" id="paramGuidanceVal">8</span>
         </div>
       </div>
+      <div class="param-hint">⚡ Plus de steps = meilleure qualité mais génération plus lente</div>
       <div class="chat-messages" id="imageMessages">
         <div class="chat-empty" id="imageEmpty">
           <div class="empty-icon">
@@ -1097,7 +1106,6 @@
           </p>
           <div class="suggestion-chips">
             <div class="chip" onclick="sendToPanel('signal','Predict the next 24 hours')">Predict next 24h</div>
-            <div class="chip" onclick="sendToPanel('signal','Solar energy forecast for today')">Today's forecast</div>
           </div>
         </div>
       </div>

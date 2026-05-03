@@ -28,6 +28,12 @@ app = FastAPI(
     openapi_url="/openapi.json"
 )
 
+# ─── STATIC FILES ───────────────────────────────────────────────────
+# Serve static files (CSS, JS, images) from /static folder
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+if os.path.exists(static_dir):
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
 # ─── CORS ──────────────────────────────────────────────────────────
 # Allow frontend to communicate; restrict in production
 app.add_middleware(

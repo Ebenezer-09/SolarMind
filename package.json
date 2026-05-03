@@ -1,0 +1,15 @@
+{
+  "name": "solarmind",
+  "version": "1.0.0",
+  "description": "**SolarMind AI** est une plateforme SaaS (Software as a Service) prête pour la production, conçue pour l'intelligence énergétique. Le système intègre de façon fluide un assistant conversationnel intelligent (RAG) spécialisé dans l'énergie solaire, un moteur de génération d'images pour les technologies vertes, et un module de prédiction IA pour analyser les signaux de production d'énergie solaire.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chart.js": "^4.5.1"
+  }
+}
