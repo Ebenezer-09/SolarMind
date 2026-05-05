@@ -2,6 +2,7 @@
 Signal Router — AI Prediction API Endpoint
 POST /api/signal/predict — Send data points to predict
 """
+import asyncio
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List, Dict, Any
@@ -30,6 +31,9 @@ async def predict_signal(req: PredictRequest):
     
     # Convert list of DataPoint models to list of dicts directly
     history_dicts = [item.dict() for item in req.history]
+    
+    # Wait 5 seconds before generating predictions (simulating processing)
+    await asyncio.sleep(5)
     
     result = SignalClient.predict(history_dicts)
     

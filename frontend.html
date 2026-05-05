@@ -818,6 +818,85 @@
       line-height: 1.4;
     }
 
+    /* ─── SIGNAL PLACEHOLDER ──────────────── */
+    .signal-placeholder {
+      width: 100%;
+      height: 280px;
+      border-radius: 10px;
+      margin-top: 8px;
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 50%, var(--bg3) 100%);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .signal-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(34, 197, 94, .08) 50%, transparent 100%);
+      animation: shimmer 2s infinite;
+    }
+
+    .signal-placeholder-graph {
+      width: 90%;
+      height: 70%;
+      position: relative;
+      z-index: 1;
+      background: rgba(20, 34, 52, 0.3);
+      border: 1px solid rgba(34, 197, 94, .15);
+      border-radius: 8px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      padding: 10px;
+    }
+
+    .signal-bar {
+      flex: 1;
+      background: linear-gradient(180deg, rgba(34, 197, 94, .6), rgba(34, 197, 94, .2));
+      border-radius: 4px 4px 0 0;
+      margin: 0 2px;
+      border: 1px solid rgba(34, 197, 94, .3);
+      animation: barGrow 2s ease-out infinite;
+      min-height: 2px;
+    }
+
+    @keyframes barGrow {
+      0% {
+        height: 5%;
+        opacity: 0.3;
+      }
+      50% {
+        opacity: 0.8;
+      }
+      100% {
+        height: 100%;
+        opacity: 0.6;
+      }
+    }
+
+    .signal-bar:nth-child(1) { animation-delay: 0.1s; }
+    .signal-bar:nth-child(2) { animation-delay: 0.2s; }
+    .signal-bar:nth-child(3) { animation-delay: 0.3s; }
+    .signal-bar:nth-child(4) { animation-delay: 0.4s; }
+    .signal-bar:nth-child(5) { animation-delay: 0.5s; }
+    .signal-bar:nth-child(6) { animation-delay: 0.6s; }
+    .signal-bar:nth-child(7) { animation-delay: 0.7s; }
+    .signal-bar:nth-child(8) { animation-delay: 0.8s; }
+
+    .signal-status-text {
+      margin-top: 12px;
+      font-size: .82rem;
+      color: var(--green);
+      font-weight: 500;
+      z-index: 1;
+      transition: opacity .4s;
+    }
+
     .toast.show {
       transform: translateY(0);
       opacity: 1;
@@ -947,12 +1026,7 @@
     </div>
 
     <div class="sidebar-footer">
-      <div class="status-pill">
-        <div class="status-dot"></div>
-        <span>All systems online</span>
-        <span style="margin-left:auto;font-size:.75rem;color:var(--green)">v3.0</span>
-      </div>
-    </div>
+    
   </aside>
 
   <!-- ─── MAIN ─────────────────────────────────────── -->
@@ -998,11 +1072,14 @@
           <h2>Demandez à SolarMind AI</h2>
           <p>Votre assistant intelligent pour l'énergie solaire, les technologies vertes et les systèmes durables.</p>
           <div class="suggestion-chips">
-            <div class="chip" onclick="sendToPanel('chat','Quels sont les points essentiels à retenir sur la situation actuelle du secteur de l\'énergie ?')">
+            <div class="chip"
+              onclick="sendToPanel('chat','Quels sont les points essentiels à retenir sur la situation actuelle du secteur de l\'énergie ?')">
               Situation actuelle</div>
-            <div class="chip" onclick="sendToPanel('chat','Quelles recommandations générales peut-on proposer pour améliorer l\'efficacité énergétique ?')">
+            <div class="chip"
+              onclick="sendToPanel('chat','Quelles recommandations générales peut-on proposer pour améliorer l\'efficacité énergétique ?')">
               Efficacité énergétique</div>
-            <div class="chip" onclick="sendToPanel('chat','Quels facteurs doivent être pris en compte pour évaluer une politique énergétique durable ?')">
+            <div class="chip"
+              onclick="sendToPanel('chat','Quels facteurs doivent être pris en compte pour évaluer une politique énergétique durable ?')">
               Politique durable</div>
           </div>
         </div>
@@ -1035,22 +1112,9 @@
             </svg>
             Steps
           </label>
-          <input type="range" id="paramSteps" min="10" max="50" value="25"
+          <input type="range" id="paramSteps" min="10" max="50" value="20"
             oninput="document.getElementById('paramStepsVal').textContent=this.value">
-          <span class="param-value" id="paramStepsVal">25</span>
-        </div>
-        <div class="param-group">
-          <label for="paramGuidance">
-            <svg class="icon icon-sm" viewBox="0 0 24 24" style="vertical-align:middle">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M12 16v-4" />
-              <path d="M12 8h.01" />
-            </svg>
-            Guidance
-          </label>
-          <input type="range" id="paramGuidance" min="1" max="20" value="8" step="0.5"
-            oninput="document.getElementById('paramGuidanceVal').textContent=this.value">
-          <span class="param-value" id="paramGuidanceVal">8</span>
+          <span class="param-value" id="paramStepsVal">20</span>
         </div>
       </div>
       <div class="param-hint">⚡ Plus de steps = meilleure qualité mais génération plus lente</div>
@@ -1103,6 +1167,10 @@
           </div>
           <h2>Signal Prediction</h2>
           <p>Predict the next 24 hours of solar energy generation. Negative values are automatically filtered to zero.
+          </p>
+          <p style="font-size: .85rem; color: var(--text2); margin-top: 12px; padding: 10px; background: rgba(34, 197, 94, .08); border-left: 3px solid var(--green); border-radius: 4px;">
+            <strong> Format de données accepté :</strong> Envoyez un JSON avec 24 entrées de ce format :<br>
+            <code style="font-size: .78rem; background: rgba(0,0,0,.3); padding: 4px 6px; border-radius: 3px; display: inline-block; margin-top: 6px;">{"history": [{"datetime": "2026-05-04T01:00:00", "ALLSKY_SFC_SW_DWN": 0, "T2M": 18.5}, ...]}</code>
           </p>
           <div class="suggestion-chips">
             <div class="chip" onclick="sendToPanel('signal','Predict the next 24 hours')">Predict next 24h</div>
@@ -1390,13 +1458,31 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             prompt: msg,
-            guidance_scale: parseFloat(document.getElementById('paramGuidance').value),
-            num_inference_steps: parseInt(document.getElementById('paramSteps').value)
+            steps: parseInt(document.getElementById('paramSteps').value)
           })
         });
-        const data = await res.json();
         clearInterval(statusInterval);
-        if (!res.ok) throw new Error(data.detail || 'Image generation failed');
+
+        if (!res.ok) {
+          let errText = 'Image generation failed';
+          try {
+            const errData = await res.json();
+            errText = errData.detail || errText;
+          } catch (e) {
+            errText = await res.text() || errText;
+          }
+          throw new Error(errText);
+        }
+
+        let imageUrl;
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const data = await res.json();
+          imageUrl = data.image;
+        } else {
+          const blob = await res.blob();
+          imageUrl = URL.createObjectURL(blob);
+        }
 
         // Replace placeholder with actual image
         const placeholderEl = document.getElementById(placeholderId);
@@ -1404,7 +1490,7 @@
           const wrapper = placeholderEl.closest('.msg-bubble');
           if (wrapper) {
             wrapper.innerHTML = `
-              <img class="bubble-img" src="${data.image}" alt="Generated image" style="animation: imgReveal .6s ease-out;" />
+              <img class="bubble-img" src="${imageUrl}" alt="Generated image" style="animation: imgReveal .6s ease-out;" />
               <div style="margin-top:6px;font-size:.78rem;color:var(--text3);">Generated for: "${escapeHtml(msg.slice(0, 60))}"</div>`;
           }
         }
@@ -1427,10 +1513,69 @@
       panelLoading.signal = true;
       document.getElementById('signalSendBtn').disabled = true;
       appendMsg('signal', 'user', msg);
-      showTyping('signal');
 
-      // Generate 24h mock history
-      const history = generateHistory();
+      // Try to parse user input as JSON with history data
+      let history = null;
+      try {
+        const parsed = JSON.parse(msg);
+        if (parsed && Array.isArray(parsed.history) && parsed.history.length > 0) {
+          // Validate structure: each entry should have datetime, ALLSKY_SFC_SW_DWN, T2M
+          const isValid = parsed.history.every(entry => 
+            entry.datetime && 
+            typeof entry.ALLSKY_SFC_SW_DWN === 'number' && 
+            typeof entry.T2M === 'number'
+          );
+          if (isValid) {
+            history = parsed.history;
+          }
+        }
+      } catch (e) {
+        // Not JSON or invalid JSON, will generate default history
+      }
+
+      // If no valid history provided, generate default 24h history
+      if (!history) {
+        history = generateHistory();
+      }
+
+      // Show signal loading placeholder
+      const placeholderId = 'signalPlaceholder_' + Date.now();
+      const placeholderHTML = `
+        <div class="signal-placeholder" id="${placeholderId}">
+          <div class="signal-placeholder-graph">
+            <div class="signal-bar"></div>
+            <div class="signal-bar"></div>
+            <div class="signal-bar"></div>
+            <div class="signal-bar"></div>
+            <div class="signal-bar"></div>
+            <div class="signal-bar"></div>
+            <div class="signal-bar"></div>
+            <div class="signal-bar"></div>
+          </div>
+          <div class="signal-status-text" id="${placeholderId}_status">Analyzing data...</div>
+        </div>`;
+      appendMsg('signal', 'bot', placeholderHTML, true, 'wide');
+
+      // Rotate status messages while loading
+      const STATUS_MESSAGES = [
+        'Analyzing data...',
+        'Processing history...',
+        'Calculating predictions...',
+        'Generating forecast...',
+        'Finalizing results...'
+      ];
+      let msgIndex = 0;
+      const statusInterval = setInterval(() => {
+        msgIndex = (msgIndex + 1) % STATUS_MESSAGES.length;
+        const statusEl = document.getElementById(`${placeholderId}_status`);
+        if (statusEl) {
+          statusEl.style.opacity = '0';
+          setTimeout(() => {
+            statusEl.textContent = STATUS_MESSAGES[msgIndex];
+            statusEl.style.opacity = '1';
+          }, 300);
+        }
+      }, 1500);
 
       try {
         const res = await fetch(`${BASE_URL}/api/signal/predict`, {
@@ -1439,22 +1584,35 @@
           body: JSON.stringify({ history })
         });
         const data = await res.json();
-        removeTyping('signal');
+        clearInterval(statusInterval);
+
         if (!res.ok) throw new Error((typeof data.detail === 'string' ? data.detail : data.error) || 'Prediction failed');
 
         const predictions = data.predictions;
         if (!predictions || predictions.length === 0) throw new Error('No predictions returned');
 
         const chartId = 'signalChart_' + (++chartCounter);
-        appendMsg('signal', 'bot',
-          `<div style="font-size:.88rem;margin-bottom:8px;">Prediction for the next 24h (${data.unit || 'kilowatts'})</div>
-       <div class="bubble-chart-wrap"><canvas id="${chartId}"></canvas></div>`, true, 'wide');
+        
+        // Replace placeholder with actual chart
+        const placeholderEl = document.getElementById(placeholderId);
+        if (placeholderEl) {
+          const wrapper = placeholderEl.closest('.msg-bubble');
+          if (wrapper) {
+            wrapper.innerHTML = `
+              <div style="font-size:.88rem;margin-bottom:8px;">Prediction for the next 24h (${data.unit || 'kilowatts'})</div>
+              <div class="bubble-chart-wrap"><canvas id="${chartId}"></canvas></div>`;
+          }
+        }
 
         renderPredictionChart(chartId, predictions);
 
       } catch (err) {
-        removeTyping('signal');
-        appendMsg('signal', 'bot', 'Error: ' + escapeHtml(err.message));
+        clearInterval(statusInterval);
+        const placeholderEl = document.getElementById(placeholderId);
+        if (placeholderEl) {
+          const wrapper = placeholderEl.closest('.msg-bubble');
+          if (wrapper) wrapper.innerHTML = 'Error: ' + escapeHtml(err.message);
+        }
         showToast(err.message);
       } finally {
         panelLoading.signal = false;
@@ -1513,14 +1671,24 @@
     function generateHistory() {
       const history = [];
       const now = new Date();
+      // Generate exactly 24 hours of history with complete data structure
       for (let i = 24; i > 0; i--) {
         const d = new Date(now.getTime() - i * 3600 * 1000);
         const hour = d.getHours();
         const isDay = hour > 6 && hour < 18;
+        
+        // Generate solar irradiance (W/m²) - realistic values
+        const allskySfcSwDwn = isDay ? (Math.random() * 800 + 200) : 0;
+        
+        // Generate temperature (°C) - realistic daily variation
+        const baseTemp = 20;
+        const dailyVariation = Math.sin((hour - 6) * Math.PI / 12) * 8; // max variation during day
+        const temp = baseTemp + dailyVariation + (Math.random() * 4 - 2);
+        
         history.push({
           datetime: d.toISOString().split('.')[0],
-          ALLSKY_SFC_SW_DWN: isDay ? (Math.random() * 800 + 200) : 0,
-          T2M: 20 + Math.random() * 15
+          ALLSKY_SFC_SW_DWN: Math.round(allskySfcSwDwn * 10) / 10,
+          T2M: Math.round(temp * 10) / 10
         });
       }
       return history;
