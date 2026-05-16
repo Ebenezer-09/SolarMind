@@ -6,7 +6,7 @@
 
 ## 1. Architecture du Projet
 
-```Mermaid
+```mermaid
 
 sequenceDiagram
     actor Frontend
