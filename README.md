@@ -6,6 +6,33 @@
 
 ## 1. Architecture du Projet
 
+```Mermaid
+
+sequenceDiagram
+    actor Frontend
+    participant Backend
+    participant Model1 as Model1 : RAG
+    participant Model2 as Model2 : Image
+    participant Model3 as Model3 : Signal
+
+    Frontend->>Backend: Requête utilisateur
+
+    Backend->>Model1: Analyse RAG
+    Model1-->>Backend: Réponse texte
+
+    Backend->>Model2: Génération image
+    Model2-->>Backend: Image générée
+
+    Backend->>Model3: Analyse signal
+    Model3-->>Backend: Résultat signal
+
+    Backend-->>Frontend: Réponse finale
+
+```
+
+---
+
+
 L'architecture est basée sur un modèle client-serveur découplé, garantissant extensibilité, sécurité et performance :
 
 ### A. Le Frontend (Interface Utilisateur)
